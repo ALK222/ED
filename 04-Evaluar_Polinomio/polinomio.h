@@ -4,16 +4,30 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <math.h>
 
 class polinomio
 {
 public:
     polinomio()
     {
-        for (int i = 0; i < 9; ++i)
+    }
+
+    int binarySearch(int ini, int fin, const std::pair<int, int> &mon)
+    {
+        if (ini == fin)
+            return ini;
+        else
         {
-            pol.push_back(0);
+            int mitad = (ini + fin) / 2;
+            if (pol[mitad].second > mon.second)
+                return binarySearch(ini, mitad, mon);
+            else if (pol[mitad].second < mon.second)
+                return binarySearch(mitad + 1, fin, mon);
+            else
+            { //igual exponente, sumo coeficientes
+                pol[mitad].first += mon.first;
+                return -1;
+            }
         }
     }
 
@@ -21,24 +35,33 @@ public:
     {
         if (cociente != 0 || grado != 0)
         {
-            pol[grado] = cociente;
+            int pos = binarySearch(0, pol.size(), std::make_pair(cociente, grado));
+            if (pos != -1)
+            {
+                pol.insert(pol.begin() + pos, std::make_pair(cociente, grado));
+            }
         }
     }
 
     int calcular(int valor)
     {
-        int result = pol[0];
-
-        for (int i = 1; i < pol.size(); ++i)
+        int resul = 0;
+        int pow = 1;
+        int pow_counter = 0;
+        for (auto i : pol)
         {
-            result += pol[i] * pow(valor, i);
+            while (pow_counter < i.second)
+            {
+                pow *= valor;
+                pow_counter++;
+            }
+            resul += i.first * pow;
         }
-
-        return result;
+        return resul;
     }
 
 private:
-    std::vector<int> pol;
+    std::vector<std::pair<int, int>> pol;
 };
 
 #endif

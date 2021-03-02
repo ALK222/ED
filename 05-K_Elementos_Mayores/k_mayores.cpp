@@ -5,46 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include "set_eda.h" // Coso propietario de la Complutense que no puedo subir
-
-template <class T>
-class setMayores
-{
-public:
-    void insert(T element)
-    {
-        if (serie.count(element) == 0)
-        {
-            serie.insert(element);
-        }
-    }
-
-    void kMayores(int k)
-    {
-        set<T> mayores;
-        int count = serie.size();
-        for (auto i : serie)
-        {
-            if (count > k)
-            {
-                count--;
-            }
-            else
-            {
-                mayores.insert(i);
-            }
-        }
-
-        for (auto j : mayores)
-        {
-            std::cout << j << " ";
-        }
-        std::cout << "\n";
-    }
-
-private:
-    set<T> serie;
-};
+#include "conjunto.h" // Coso propietario de la Complutense que no puedo subir
 
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
@@ -59,8 +20,9 @@ bool resuelveCaso()
 
     if (letra == 'P')
     {
-        setMayores<std::string> serie;
+
         int k;
+        set<std::string> serie;
         std::string palabra;
         //leemos el k
         std::cin >> k;
@@ -69,12 +31,17 @@ bool resuelveCaso()
         {
             serie.insert(palabra);
             std::cin >> palabra;
+            if (serie.size() > k)
+            {
+                serie.borrarMenor();
+            }
         }
-        serie.kMayores(k);
+
+        serie.print_menores();
     }
     else if (letra == 'N')
     {
-        setMayores<int> serie;
+        set<int> serie;
         int k, n;
 
         //leemos el k
@@ -84,8 +51,13 @@ bool resuelveCaso()
         {
             serie.insert(n);
             std::cin >> n;
+            if (serie.size() > k)
+            {
+                serie.borrarMenor();
+            }
         }
-        serie.kMayores(k);
+
+        serie.print_menores();
     }
 
     return true;
