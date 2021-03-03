@@ -43,11 +43,11 @@ public:
         }
     }
 
-    int calcular(int valor)
+    int64_t calcular(int valor)
     {
-        int resul = 0;
-        int pow = 1;
-        int pow_counter = 0;
+        int64_t resul = 0;
+        int64_t pow = 1;
+        int64_t pow_counter = 0;
         for (auto i : pol)
         {
             while (pow_counter < i.second)
