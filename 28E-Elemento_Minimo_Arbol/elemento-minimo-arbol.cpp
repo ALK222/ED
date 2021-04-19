@@ -35,13 +35,13 @@ T minimo(bintree<T> bt)
 
 bool resuelveCaso()
 {
+    char tipo;
+    std::cin >> tipo;
+
     if (!std::cin)
     {
         return false;
     }
-
-    char tipo;
-    std::cin >> tipo;
 
     if (tipo == 'N')
     {
