@@ -5,119 +5,31 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include <algorithm>
 #include "bintree_eda.h"
 
 template <class T>
-class myTree : public bintree<T>
+void fronteras(bintree<T> bt)
 {
-    using Link = typename bintree<T>::Link;
-
-public:
-    myTree() : bintree<T>() {}
-    myTree(myTree<T> const &l, T const &e, myTree<T> const &r) : bintree<T>(l, e, r) {}
-
-    int nodos()
+    if (bt.empty())
     {
-        return numNodos(this->raiz);
+        return;
     }
-
-    int hojas()
+    else if (bt.left().empty() && bt.right().empty())
     {
-        return numHojas(this->raiz);
-    }
-
-    int al()
-    {
-        return altura(this->raiz);
-    }
-
-    void fronteras()
-    {
-        frontera(this->raiz);
-    }
-
-private:
-    int numNodos(Link l)
-    {
-        if (l == nullptr)
-        {
-            return 0;
-        }
-        else
-        {
-            return 1 + (numNodos(l->left) + numNodos(l->right));
-        }
-    }
-
-    int numHojas(Link l)
-    {
-        if (l == nullptr)
-        {
-            return 0;
-        }
-        else if (l->left == nullptr && l->right == nullptr)
-        {
-            return 1;
-        }
-        else
-        {
-            return (numHojas(l->left) + numHojas(l->right));
-        }
-    }
-
-    int altura(Link l)
-    {
-        if (l == nullptr)
-        {
-            return 0;
-        }
-        else
-        {
-            return 1 + std::max(altura(l->left), altura(l->right));
-        }
-    }
-
-    void frontera(Link l)
-    {
-        if (l == nullptr)
-        {
-            return;
-        }
-        else if (l->left == nullptr && l->right == nullptr)
-        {
-            std::cout << l->elem << " ";
-        }
-        else
-        {
-            frontera(l->left);
-            frontera(l->right);
-        }
-    }
-};
-
-template <typename T>
-inline myTree<T> leerArbolNew(T vacio)
-{
-    T raiz;
-    std::cin >> raiz;
-    if (raiz == vacio)
-    { // es un árbol vacío
-        return {};
+        std::cout << bt.root() << " ";
     }
     else
-    { // leer recursivamente los hijos
-        myTree<T> iz = leerArbolNew(vacio);
-        myTree<T> dr = leerArbolNew(vacio);
-        return {iz, raiz, dr};
+    {
+        fronteras(bt.left());
+        fronteras(bt.right());
     }
 }
 
 bool resuelveCaso()
 {
-    myTree<int> ar = leerArbolNew(-1);
+    bintree<int> bt = leerArbol(-1);
 
-    ar.fronteras();
+    fronteras(bt);
     std::cout << "\n";
     return true;
 }

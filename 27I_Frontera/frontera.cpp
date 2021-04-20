@@ -5,31 +5,119 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <algorithm>
 #include "bintree_eda.h"
 
 template <class T>
-void fronteras(bintree<T> bt)
+class myTree : public bintree<T>
 {
-    if (bt.empty())
+    using Link = typename bintree<T>::Link;
+
+public:
+    myTree() : bintree<T>() {}
+    myTree(myTree<T> const &l, T const &e, myTree<T> const &r) : bintree<T>(l, e, r) {}
+
+    int nodos()
     {
-        return;
+        return numNodos(this->raiz);
     }
-    else if (bt.left().empty() && bt.right().empty())
+
+    int hojas()
     {
-        std::cout << bt.root() << " ";
+        return numHojas(this->raiz);
+    }
+
+    int al()
+    {
+        return altura(this->raiz);
+    }
+
+    void fronteras()
+    {
+        frontera(this->raiz);
+    }
+
+private:
+    int numNodos(Link l)
+    {
+        if (l == nullptr)
+        {
+            return 0;
+        }
+        else
+        {
+            return 1 + (numNodos(l->left) + numNodos(l->right));
+        }
+    }
+
+    int numHojas(Link l)
+    {
+        if (l == nullptr)
+        {
+            return 0;
+        }
+        else if (l->left == nullptr && l->right == nullptr)
+        {
+            return 1;
+        }
+        else
+        {
+            return (numHojas(l->left) + numHojas(l->right));
+        }
+    }
+
+    int altura(Link l)
+    {
+        if (l == nullptr)
+        {
+            return 0;
+        }
+        else
+        {
+            return 1 + std::max(altura(l->left), altura(l->right));
+        }
+    }
+
+    void frontera(Link l)
+    {
+        if (l == nullptr)
+        {
+            return;
+        }
+        else if (l->left == nullptr && l->right == nullptr)
+        {
+            std::cout << l->elem << " ";
+        }
+        else
+        {
+            frontera(l->left);
+            frontera(l->right);
+        }
+    }
+};
+
+template <typename T>
+inline myTree<T> leerArbolNew(T vacio)
+{
+    T raiz;
+    std::cin >> raiz;
+    if (raiz == vacio)
+    { // es un árbol vacío
+        return {};
     }
     else
-    {
-        fronteras(bt.left());
-        fronteras(bt.right());
+    { // leer recursivamente los hijos
+        myTree<T> iz = leerArbolNew(vacio);
+        myTree<T> dr = leerArbolNew(vacio);
+        return {iz, raiz, dr};
     }
 }
 
 bool resuelveCaso()
 {
-    bintree<int> bt = leerArbol(-1);
+    myTree<int> ar = leerArbolNew(-1);
 
-    fronteras(bt);
+    ar.fronteras();
     std::cout << "\n";
     return true;
 }

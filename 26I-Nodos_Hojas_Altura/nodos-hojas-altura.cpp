@@ -9,53 +9,93 @@
 #include "bintree_eda.h"
 
 template <class T>
-int numNodos(bintree<T> ar)
+class myTree : public bintree<T>
 {
-    if (ar.empty())
-    {
-        return 0;
-    }
-    else
-    {
-        return 1 + (numNodos(ar.left()) + numNodos(ar.right()));
-    }
-}
+    using Link = typename bintree<T>::Link;
 
-template <class T>
-int numHojas(bintree<T> ar)
-{
-    if (ar.empty())
-    {
-        return 0;
-    }
-    else if (ar.left().empty() && ar.right().empty())
-    {
-        return 1;
-    }
-    else
-    {
-        return (numHojas(ar.left()) + numHojas(ar.right()));
-    }
-}
+public:
+    myTree() : bintree<T>() {}
+    myTree(myTree<T> const &l, T const &e, myTree<T> const &r) : bintree<T>(l, e, r) {}
 
-template <class T>
-int altura(bintree<T> ar)
-{
-    if (ar.empty())
+    int nodos()
     {
-        return 0;
+        return numNodos(this->raiz);
+    }
+
+    int hojas()
+    {
+        return numHojas(this->raiz);
+    }
+
+    int al()
+    {
+        return altura(this->raiz);
+    }
+
+private:
+    int numNodos(Link l)
+    {
+        if (l == nullptr)
+        {
+            return 0;
+        }
+        else
+        {
+            return 1 + (numNodos(l->left) + numNodos(l->right));
+        }
+    }
+
+    int numHojas(Link l)
+    {
+        if (l == nullptr)
+        {
+            return 0;
+        }
+        else if (l->left == nullptr && l->right == nullptr)
+        {
+            return 1;
+        }
+        else
+        {
+            return (numHojas(l->left) + numHojas(l->right));
+        }
+    }
+
+    int altura(Link l)
+    {
+        if (l == nullptr)
+        {
+            return 0;
+        }
+        else
+        {
+            return 1 + std::max(altura(l->left), altura(l->right));
+        }
+    }
+};
+
+template <typename T>
+inline myTree<T> leerArbolNew(T vacio)
+{
+    T raiz;
+    std::cin >> raiz;
+    if (raiz == vacio)
+    { // es un árbol vacío
+        return {};
     }
     else
-    {
-        return 1 + std::max(altura(ar.left()), altura(ar.right()));
+    { // leer recursivamente los hijos
+        myTree<T> iz = leerArbolNew(vacio);
+        myTree<T> dr = leerArbolNew(vacio);
+        return {iz, raiz, dr};
     }
 }
 
 bool resuelveCaso()
 {
-    bintree<char> ar = leerArbol('.');
+    myTree<char> ar = leerArbolNew('.');
 
-    std::cout << numNodos(ar) << " " << numHojas(ar) << " " << altura(ar) << "\n";
+    std::cout << ar.nodos() << " " << ar.hojas() << " " << ar.al() << "\n";
     return true;
 }
 
