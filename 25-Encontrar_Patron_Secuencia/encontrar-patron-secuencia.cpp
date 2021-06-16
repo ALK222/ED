@@ -7,7 +7,7 @@
 #include <list>
 
 /**
- * @param ini1 iterador al principio de la secuencia en la que debemos buscar 
+ * @param ini1 iterador al principio de la secuencia en la que debemos buscar
  * @param fin1 iterador al final de la secuencia en la que se debe buscar
  * @param ini2 iterador al principio de la secuencia que queremos buscar
  * @param fin2 iterador al final de la secuencia que queremos buscar
@@ -31,7 +31,7 @@ std::pair<bool, std::list<int>::iterator> MySearch(std::list<int>::iterator cons
             ++it2;
             if (it2 == fin2)
             {
-                return {true, it1};
+                return {true, inicio};
             }
 
             if (it1 == fin1)
@@ -47,54 +47,48 @@ std::pair<bool, std::list<int>::iterator> MySearch(std::list<int>::iterator cons
 
 bool resuelveCaso()
 {
-    int sizeFirstSecuence;
-    int sizeSecondSecuence;
-
-    std::cin >> sizeFirstSecuence >> sizeSecondSecuence;
-
-    if (sizeFirstSecuence == 0 && sizeSecondSecuence == 0)
-    {
+    int nElem1, nElem2;
+    std::cin >> nElem1 >> nElem2;
+    if (nElem1 == 0 && nElem2 == 0)
         return false;
-    }
-
+    // Lectura delos datos
     std::list<int> lista1;
+    for (int i = 0; i < nElem1; ++i)
+    {
+        int aux;
+        std::cin >> aux;
+        lista1.push_back(aux);
+    }
     std::list<int> lista2;
-
-    for (int i = 0; i < sizeFirstSecuence; ++i)
+    for (int i = 0; i < nElem2; ++i)
     {
-        int num;
-        std::cin >> num;
-        lista1.push_back(num);
+        int aux;
+        std::cin >> aux;
+        lista2.push_back(aux);
     }
-    for (int i = 0; i < sizeSecondSecuence; ++i)
+    // Elimina todas las apariciones de la lista2 en la lista 1
+    // Utilizando la función Mysearch
+    auto it1 = lista1.begin();
+    while (it1 != lista1.end())
     {
-        int num;
-        std::cin >> num;
-        lista2.push_back(num);
-    }
-
-    std::pair<bool, std::list<int>::iterator> it = MySearch(lista1.begin(), lista1.end(), lista2.begin(), lista2.end());
-    while (!lista1.empty() && it.first)
-    {
-
-        auto it2 = it.second;
-        for (int i = 0; i < sizeSecondSecuence; i++)
+        it1 = MySearch(it1, lista1.end(), lista2.begin(), lista2.end()).second;
+        if (it1 != lista1.end())
         {
-            --it2;
-        }
-
-        lista1.erase(it2, it.second);
-        if (!lista1.empty())
-        {
-            it = MySearch(lista1.begin(), lista1.end(), lista2.begin(), lista2.end());
+            for (int i = 0; i < lista2.size(); ++i)
+            {
+                it1 = lista1.erase(it1);
+            }
         }
     }
-
-    for (auto i : lista1)
+    // Escribe la lista
+    auto it = lista1.begin();
+    if (it != lista1.end())
     {
-        std::cout << i << " ";
+        std::cout << *it;
+        ++it;
     }
-
+    for (; it != lista1.end(); ++it)
+        std::cout << ' ' << *it;
     std::cout << '\n';
 
     return true;
@@ -102,17 +96,16 @@ bool resuelveCaso()
 
 int main()
 {
-    // Para la entrada por fichero.
-    // Comentar para acepta el reto
+
 #ifndef DOMJUDGE
     std::ifstream in("datos.txt");
     auto cinbuf = std::cin.rdbuf(in.rdbuf()); //save old buf and redirect std::cin to casos.txt
 #endif
 
     while (resuelveCaso())
-        ;
+    {
+    } //Resolvemos todos los casos
 
-        // Para restablecer entrada. Comentar para acepta el reto
 #ifndef DOMJUDGE // para dejar todo como estaba al principio
     std::cin.rdbuf(cinbuf);
     system("PAUSE");
