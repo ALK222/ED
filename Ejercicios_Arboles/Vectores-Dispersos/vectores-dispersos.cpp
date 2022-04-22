@@ -38,20 +38,10 @@ double producto_escalar(const tVector &u, const tVector &v)
             sol.inserta(j.elem().x, primero.valorPara(j.elem().x) * j.elem().val);
             primero.borra(j.elem().x);
         }
-        else
-        {
-            sol.inserta(j.elem().x, 0);
-        }
         j.next();
     }
 
     auto dIt1 = primero.cbegin();
-
-    while (dIt1 != primero.cend())
-    {
-        sol.inserta(dIt1.clave(), 0);
-        dIt1.next();
-    }
 
     if (notZero)
     {
