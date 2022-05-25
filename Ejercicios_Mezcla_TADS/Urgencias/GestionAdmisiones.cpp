@@ -1,11 +1,11 @@
 #include "GestionAdmisiones.h"
 
-
 /**
  COMPLEJIDAD: Determina y justifica aquí la complejidad de la operación
  coste O(1), la creación de objetos es constante
 */
-GestionAdmisiones::GestionAdmisiones() {
+GestionAdmisiones::GestionAdmisiones()
+{
 	// A IMPLEMENTAR
 	_pacientes = Diccionario<CodigoPaciente, tPaciente>();
 	_cola = Lista<CodigoPaciente>();
@@ -15,86 +15,72 @@ GestionAdmisiones::GestionAdmisiones() {
  COMPLEJIDAD: Determina y justifica aquí la complejidad de la operación
  Complejidad O(N), siendo n el número de pacientes totales
 */
-void GestionAdmisiones::an_paciente(CodigoPaciente codigo, const string& nombre, unsigned int edad, const string& sintomas) {
+void GestionAdmisiones::an_paciente(CodigoPaciente codigo, const string &nombre, unsigned int edad, const string &sintomas)
+{
 	// A IMPLEMENTAR
 	if (_pacientes.contiene(codigo))
 	{
 		throw EPacienteDuplicado();
 	}
-	_pacientes.inserta(codigo, { nombre, edad, sintomas });
-	_cola.pon_final(codigo);
+	_cola.pon_ppio(codigo);
+	_pacientes.inserta(codigo, {nombre, edad, sintomas, _cola.begin()});
 }
 
 /**
  COMPLEJIDAD: Determina y justifica aquí la complejidad de la operación
  Complejidad O(logN) ya que solo busca en parte del diccionario
 */
-void GestionAdmisiones::info_paciente(CodigoPaciente codigo, string& nombre, unsigned int& edad, string& sintomas) const {
+void GestionAdmisiones::info_paciente(CodigoPaciente codigo, string &nombre, unsigned int &edad, string &sintomas) const
+{
 	// A IMPLEMENTAR
 	if (!_pacientes.contiene(codigo))
 	{
 		throw EPacienteNoExiste();
 	}
 
-	tPaciente aux = _pacientes.valorPara(codigo);
+	auto aux = _pacientes.cbusca(codigo);
 
-	nombre = aux.nombre;
-	edad = aux.edad;
-	sintomas = aux.sintomas;
+	nombre = aux.valor().nombre;
+	edad = aux.valor().edad;
+	sintomas = aux.valor().sintomas;
 }
 
 /**
  COMPLEJIDAD: Determina y justifica aquí la complejidad de la operación
  Complejidad O(1), comprobar si es vacio y sacar el primer valor es coste constante
 */
-void GestionAdmisiones::siguiente(CodigoPaciente& codigo) const {
-  // A IMPLEMENTAR
+void GestionAdmisiones::siguiente(CodigoPaciente &codigo) const
+{
+	// A IMPLEMENTAR
 	if (_cola.esVacia())
 	{
 		throw ENoHayPacientes();
 	}
 
-	codigo = _cola.primero();
+	codigo = _cola.ultimo();
 }
 
 /**
  COMPLEJIDAD: Determina y justifica aquí la complejidad de la operación
  Complejidad O(1), comprobar si es vacio es constante
 */
-bool GestionAdmisiones::hay_pacientes() const {  
-  // A IMPLEMENTAR
+bool GestionAdmisiones::hay_pacientes() const
+{
+	// A IMPLEMENTAR
 	return !_cola.esVacia();
 }
 
 /**
  COMPLEJIDAD: Determina y justifica aquí la complejidad de la operación
- Complejidad O(N) ya que se realiza una busqueda sobre la lista
+ Complejidad O(logN) ya que solo busca en parte del diccionario
 */
-void GestionAdmisiones::elimina(CodigoPaciente codigo) {
+void GestionAdmisiones::elimina(CodigoPaciente codigo)
+{
 	// A IMPLEMENTAR
-	if (_pacientes.contiene(codigo))
+	const auto it = _pacientes.busca(codigo);
+	if (it != _pacientes.end())
 	{
+		_cola.eliminar(it.valor().pos);
 		_pacientes.borra(codigo);
-
-		auto paciente = _cola.begin();
-		bool encontrado = false;
-
-		while (paciente != _cola.end() && !encontrado)
-		{
-			if (paciente.elem() == codigo)
-			{
-				encontrado = true;
-			}
-			else
-			{
-				paciente.next();
-			}
-		}
-
-		if (encontrado)
-		{
-			_cola.eliminar(paciente);
-		}
 	}
 }
-   
